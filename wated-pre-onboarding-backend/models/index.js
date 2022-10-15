@@ -19,8 +19,8 @@ db.post = require('./post')(sequelize, Sequelize);
 db.applyPost = require('./applyPost')(sequelize, Sequelize);
 
 /** 1 : N  company : post */
-db.company.hasMany(db.post, { onDelete: 'cascade' });
-db.post.belongsTo(db.company);
+db.company.hasMany(db.post, { onDelete: 'cascade', foreignKey: 'company_id', sourceKey: 'company_id' });
+db.post.belongsTo(db.company, { foreignKey: 'company_id', targetKey: 'company_id' });
 
 /** N : M  user : post */
 db.user.belongsToMany(db.post, { through: 'apply_post', as: 'applied', foreignKey: 'user_id' });
