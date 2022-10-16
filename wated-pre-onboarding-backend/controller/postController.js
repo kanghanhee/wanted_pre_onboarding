@@ -26,8 +26,6 @@ module.exports = {
    * @채용공고_검색하기
    * @router GET /search/integration?search=
    * @error
-   *  1.
-   *  2.
    */
   getPostSearch: async (req, res) => {
     const { search } = req.query;
@@ -48,6 +46,7 @@ module.exports = {
    * @router GET /post/:postId
    * @error
    *  1. 필요한 값이 없는 경우
+   *  2. 존재하지 않는 채용 공고 id인 경우
    */
   getPostDetail: async (req, res) => {
     const { postId } = req.params;
@@ -59,6 +58,13 @@ module.exports = {
 
     try {
       const result = await postService.getPostDetail(postId);
+
+      // @error 2.
+      if (result === returnType.DB_NOT_FOUND) {
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.READ_POST_FAIL));
+      }
 
       return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_POST_SUCCESS, result));
     } catch (error) {

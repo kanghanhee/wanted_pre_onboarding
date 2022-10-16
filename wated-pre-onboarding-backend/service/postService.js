@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 const returnType = require('../constants/returnType');
+const postDetailDto = require('../dto/postDetailDto');
 const postDto = require('../dto/postDto');
 const postListDto = require('../dto/postListDto');
 const { company, post } = require('../models');
@@ -59,8 +60,17 @@ module.exports = {
         include: [{ model: company }],
         where: { post_id: postId },
       });
+      if (!postDetail) {
+        return returnType.DB_NOT_FOUND;
+      }
 
-      return postDto(postDetail);
+      const findPostByCompanyId = await post.findAll({
+        where: { company_id: postDetail.company_id },
+        attributes: ['post_id'],
+      });
+      const postList = findPostByCompanyId.map(post => post.post_id);
+
+      return postDetailDto(postDetail, postList);
     } catch (error) {
       throw error;
     }
@@ -140,6 +150,17 @@ module.exports = {
       await post.destroy({
         where: { post_id: postId },
       });
+    } catch (error) {
+      throw error;
+    }
+  },
+  getPostByCompanyId: async companyId => {
+    try {
+      const postList = await post.findAll({
+        where: { company_id: companyId },
+      });
+      console.log(postList);
+      return postListDto(postList);
     } catch (error) {
       throw error;
     }
