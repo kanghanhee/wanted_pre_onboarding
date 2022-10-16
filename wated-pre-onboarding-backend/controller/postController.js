@@ -1,4 +1,5 @@
 const responseMessage = require('../constants/responseMessage');
+const returnType = require('../constants/returnType');
 const statusCode = require('../constants/statusCode');
 const util = require('../constants/util');
 const postService = require('../service/postService');
@@ -48,12 +49,13 @@ module.exports = {
    * @채용공고_상세_불러오기
    * @router GET /post/:postId
    * @error
-   *  1.
+   *  1. 필요한 값이 없는 경우
    *  2.
    */
   getPostDetail: async (req, res) => {
     const { postId } = req.params;
 
+    // @error 1.
     if (!postId) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
     }
@@ -73,10 +75,34 @@ module.exports = {
    * @채용공고_등록하기
    * @router POST /post
    * @error
-   *  1.
-   *  2.
+   *  1. 필요한 값이 없는 경우
+   *  2. 존재하지 않는 회사 id인 경우
    */
-  addPost: async (req, res) => {},
+  addPost: async (req, res) => {
+    const { companyId, position, compensation, content, tech } = req.body;
+
+    // @error 1.
+    if (!companyId || !position || !compensation || !content || !tech) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+    }
+
+    try {
+      const result = await postService.addPost(companyId, position, compensation, content, tech);
+
+      // @error 2.
+      if (result === returnType.DB_NOT_FOUND) {
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.READ_COMPANY_FAIL));
+      }
+
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATE_POST_SUCCESS, result));
+    } catch (error) {
+      return res
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+    }
+  },
 
   /**
    * @채용공고_수정하기

@@ -7,4 +7,8 @@ module.exports = {
 
   /* post */
   READ_POST_SUCCESS: '채용공고 불러오기 성공',
+  CREATE_POST_SUCCESS: '채용공고 등록하기 성공',
+
+  /* company */
+  READ_COMPANY_FAIL: '존재하지 않는 회사입니다.',
 };

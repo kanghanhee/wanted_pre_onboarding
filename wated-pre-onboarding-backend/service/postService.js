@@ -1,3 +1,4 @@
+const returnType = require('../constants/returnType');
 const postDto = require('../dto/postDto');
 const postListDto = require('../dto/postListDto');
 const { company, post } = require('../models');
@@ -10,6 +11,7 @@ module.exports = {
     try {
       const postList = await post.findAll({
         include: [{ model: company }],
+        order: [['createdAt', 'DESC']],
       });
 
       return postListDto(postList);
@@ -52,7 +54,28 @@ module.exports = {
   /**
    * @채용공고_등록하기
    */
-  addPost: async () => {},
+  addPost: async (companyId, position, compensation, content, tech) => {
+    try {
+      const findCompany = await company.findOne({
+        where: { company_id: companyId },
+      });
+      if (!findCompany) {
+        return returnType.DB_NOT_FOUND;
+      }
+
+      const addPost = await post.create({
+        position: position,
+        compensation: compensation,
+        content: content,
+        tech: tech,
+        company_id: companyId,
+      });
+
+      return addPost;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   /**
    * @채용공고_수정하기
