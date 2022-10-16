@@ -115,10 +115,34 @@ module.exports = {
 
   /**
    * @채용공고_삭제하기
-   * @router DELETE /post
+   * @router DELETE /post/:postId
    * @error
-   *  1.
-   *  2.
+   * 1. 필요한 값이 없는 경우
+   * 2. 존재하지 않는 채용공고인 경우
    */
-  deletePost: async (req, res) => {},
+  deletePost: async (req, res) => {
+    const { postId } = req.params;
+
+    // @error 1.
+    if (!postId) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+    }
+
+    try {
+      const result = await postService.deletePost(postId);
+
+      // @error 2.
+      if (result === returnType.DB_NOT_FOUND) {
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.READ_POST_FAIL));
+      }
+
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.DELETE_POST_SUCCESS));
+    } catch (error) {
+      return res
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+    }
+  },
 };

@@ -85,5 +85,20 @@ module.exports = {
   /**
    * @채용공고_삭제하기
    */
-  deletePost: async () => {},
+  deletePost: async postId => {
+    try {
+      const findPost = await post.findOne({
+        where: { post_id: postId },
+      });
+      if (!findPost) {
+        return returnType.DB_NOT_FOUND;
+      }
+
+      await post.destroy({
+        where: { post_id: postId },
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
 };
