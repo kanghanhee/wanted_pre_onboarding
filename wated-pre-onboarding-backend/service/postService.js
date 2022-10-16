@@ -3,7 +3,7 @@ const returnType = require('../constants/returnType');
 const postDetailDto = require('../dto/postDetailDto');
 const postDto = require('../dto/postDto');
 const postListDto = require('../dto/postListDto');
-const { company, post } = require('../models');
+const { company, post, applyPost, user } = require('../models');
 
 module.exports = {
   /**
@@ -154,13 +154,41 @@ module.exports = {
       throw error;
     }
   },
-  getPostByCompanyId: async companyId => {
+  /**
+   * @채용공고_지원하기
+   */
+  addApplyPost: async (postId, userId) => {
     try {
-      const postList = await post.findAll({
-        where: { company_id: companyId },
+      const findUser = await user.findOne({
+        where: { user_id: userId },
       });
-      console.log(postList);
-      return postListDto(postList);
+      if (!findUser) {
+        return returnType.USER_NOT_FOUND;
+      }
+
+      const findPost = await post.findOne({
+        where: { post_id: postId },
+      });
+      if (!findPost) {
+        return returnType.DB_NOT_FOUND;
+      }
+
+      const findApplyPost = await applyPost.findOne({
+        where: {
+          post_id: postId,
+          user_id: userId,
+        },
+      });
+      if (findApplyPost) {
+        return returnType.VALUE_ALREADY_EXIST;
+      }
+
+      const addApplyPost = await applyPost.create({
+        post_id: postId,
+        user_id: userId,
+      });
+
+      return addApplyPost;
     } catch (error) {
       throw error;
     }

@@ -11,7 +11,12 @@ module.exports = {
   READ_POST_FAIL: '존재하지 않는 공고입니다.',
   DELETE_POST_SUCCESS: '채용공고 삭제하기 성공',
   UPDATE_POST_SUCCESS: '채용공고 수정하기 성공',
+  ALREADY_APPLYPOST: '이미 채용 공고에 지원했습니다.',
+  CREATE_APPLYPOST_SUCCESS: '채용공고 지원하기 성공',
 
   /* company */
   READ_COMPANY_FAIL: '존재하지 않는 회사입니다.',
+
+  /* user */
+  READ_USER_FAIL: '존재하지 않는 사용자입니다.',
 };

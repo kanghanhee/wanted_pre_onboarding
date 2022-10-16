@@ -168,4 +168,52 @@ module.exports = {
         .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
     }
   },
+  /**
+   * @채용공고_지원하기
+   * @router POST /post/apply
+   * @error
+   * 1. 필요한 값이 없는 경우
+   * 2. 존재하지 않는 채용공고인 경우
+   * 3. 이미 지원한 경우(사용자는 1회만 지원 가능)
+   * 4. 존재하지 않는 사용자인 경우
+   */
+  addApplyPost: async (req, res) => {
+    const { postId, userId } = req.body;
+
+    // @error 1.
+    if (!postId || !userId) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+    }
+
+    try {
+      const result = await postService.addApplyPost(postId, userId);
+
+      // @error 2.
+      if (result === returnType.DB_NOT_FOUND) {
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.READ_POST_FAIL));
+      }
+
+      // @error 3.
+      if (result === returnType.VALUE_ALREADY_EXIST) {
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_APPLYPOST));
+      }
+
+      // @error 4.
+      if (result === returnType.USER_NOT_FOUND) {
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.READ_USER_FAIL));
+      }
+
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATE_APPLYPOST_SUCCESS));
+    } catch (error) {
+      return res
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+    }
+  },
 };
