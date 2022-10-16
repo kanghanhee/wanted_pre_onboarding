@@ -1,5 +1,6 @@
+const postDto = require('../dto/postDto');
 const postListDto = require('../dto/postListDto');
-const { post, company } = require('../models');
+const { company, post } = require('../models');
 
 module.exports = {
   /**
@@ -35,7 +36,18 @@ module.exports = {
   /**
    * @채용공고_상세_불러오기
    */
-  getPostDetail: async () => {},
+  getPostDetail: async postId => {
+    try {
+      const postDetail = await post.findOne({
+        include: [{ model: company }],
+        where: { post_id: postId },
+      });
+
+      return postDto(postDetail);
+    } catch (error) {
+      throw error;
+    }
+  },
 
   /**
    * @채용공고_등록하기

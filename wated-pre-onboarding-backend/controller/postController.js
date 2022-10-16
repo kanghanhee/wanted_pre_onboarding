@@ -51,7 +51,23 @@ module.exports = {
    *  1.
    *  2.
    */
-  getPostDetail: async (req, res) => {},
+  getPostDetail: async (req, res) => {
+    const { postId } = req.params;
+
+    if (!postId) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+    }
+
+    try {
+      const result = await postService.getPostDetail(postId);
+
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_POST_SUCCESS, result));
+    } catch (error) {
+      return res
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+    }
+  },
 
   /**
    * @채용공고_등록하기
