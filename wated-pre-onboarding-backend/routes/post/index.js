@@ -4,6 +4,7 @@ const postController = require('../../controller/postController');
 
 router.get('/', postController.getPostAll);
 router.get('/:postId', postController.getPostDetail);
+router.get('/search/integration', postController.getPostSearch);
 router.post('/', postController.addPost);
 router.patch('/:postId', postController.updatePost);
 router.delete('/:postId', postController.deletePost);

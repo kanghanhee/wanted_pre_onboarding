@@ -24,24 +24,24 @@ module.exports = {
 
   /**
    * @채용공고_검색하기
-   * @router GET /post?search=
+   * @router GET /search/integration?search=
    * @error
    *  1.
    *  2.
    */
-  //   getPostSearch: async (req, res) => {
-  //     const { search } = req.query;
+  getPostSearch: async (req, res) => {
+    const { search } = req.query;
 
-  //     try {
-  //       const result = await postService.getPostSearch(search);
+    try {
+      const result = await postService.getPostSearch(search);
 
-  //       return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_POST_SUCCESS, result));
-  //     } catch (error) {
-  //       return res
-  //         .status(statusCode.INTERNAL_SERVER_ERROR)
-  //         .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
-  //     }
-  //   },
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_POST_SUCCESS, result));
+    } catch (error) {
+      return res
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+    }
+  },
 
   /**
    * @채용공고_상세_불러오기

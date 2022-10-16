@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const returnType = require('../constants/returnType');
 const postDto = require('../dto/postDto');
 const postListDto = require('../dto/postListDto');
@@ -24,12 +25,26 @@ module.exports = {
    * @채용공고_검색하기
    */
   getPostSearch: async search => {
+    let whereClause = {
+      [Op.and]: {},
+    };
+    if (search.length > 0) {
+      whereClause[Op.and] = { [Op.or]: {} };
+      whereClause[Op.and][Op.or][`$company.company_name$`] = { [Op.like]: `%${search}%` };
+      whereClause[Op.and][Op.or]['$post.position$'] = { [Op.like]: `%${search}%` };
+    }
     try {
       const postList = await post.findAll({
-        include: [{ model: company }],
+        include: [
+          {
+            model: company,
+            where: whereClause,
+          },
+        ],
+        order: [['createdAt', 'DESC']],
       });
 
-      return postList;
+      return postListDto(postList);
     } catch (error) {
       throw error;
     }
