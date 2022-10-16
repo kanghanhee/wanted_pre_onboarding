@@ -10,6 +10,7 @@ module.exports = {
   CREATE_POST_SUCCESS: '채용공고 등록하기 성공',
   READ_POST_FAIL: '존재하지 않는 공고입니다.',
   DELETE_POST_SUCCESS: '채용공고 삭제하기 성공',
+  UPDATE_POST_SUCCESS: '채용공고 수정하기 성공',
 
   /* company */
   READ_COMPANY_FAIL: '존재하지 않는 회사입니다.',

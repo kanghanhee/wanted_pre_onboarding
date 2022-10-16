@@ -80,7 +80,35 @@ module.exports = {
   /**
    * @채용공고_수정하기
    */
-  updatePost: async () => {},
+  updatePost: async (postId, position, compensation, content, tech) => {
+    try {
+      const findPost = await post.findOne({
+        where: { post_id: postId },
+      });
+      if (!findPost) {
+        return returnType.DB_NOT_FOUND;
+      }
+
+      await post.update(
+        {
+          position: position,
+          compensation: compensation,
+          content: content,
+          tech: tech,
+        },
+        {
+          where: { post_id: postId },
+        },
+      );
+      const updatePost = await post.findOne({
+        where: { post_id: postId },
+      });
+
+      return updatePost;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   /**
    * @채용공고_삭제하기
